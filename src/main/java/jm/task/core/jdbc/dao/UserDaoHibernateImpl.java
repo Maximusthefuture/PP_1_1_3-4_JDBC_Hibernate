@@ -4,18 +4,12 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.criteria.internal.CriteriaQueryImpl;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Queue;
+
 
 public class UserDaoHibernateImpl implements UserDao {
 
@@ -30,7 +24,8 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
         transaction.begin();
-        session.createSQLQuery("create table if not exists users (id int not null auto_increment, userName varchar(58)," +
+        session.createSQLQuery("create table if not exists users " +
+                "(id int not null auto_increment, userName varchar(58)," +
                 "lastName varchar(100), age smallint, primary key (id))").executeUpdate();
         transaction.commit();
     }
@@ -71,10 +66,12 @@ public class UserDaoHibernateImpl implements UserDao {
             if (user != null) {
                 session.delete(user);
                 transaction.commit();
+                session.close();
             }
+
         } catch (Exception ex) {
-            ex.printStackTrace();
             session.clear();
+            ex.printStackTrace();
             transaction.rollback();
         }
     }
