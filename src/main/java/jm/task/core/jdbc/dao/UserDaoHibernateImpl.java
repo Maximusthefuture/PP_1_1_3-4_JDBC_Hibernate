@@ -23,11 +23,17 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        transaction.begin();
-        session.createSQLQuery("create table if not exists users " +
-                "(id int not null auto_increment, userName varchar(58)," +
-                "lastName varchar(100), age smallint, primary key (id))").executeUpdate();
-        transaction.commit();
+        try {
+            transaction.begin();
+            session.createSQLQuery("create table if not exists users " +
+                    "(id int not null auto_increment, userName varchar(58)," +
+                    "lastName varchar(100), age smallint, primary key (id))").executeUpdate();
+            transaction.commit();
+        } catch (Exception ex) {
+            session.clear();
+            transaction.rollback();
+        }
+
     }
 
     @Override
@@ -38,7 +44,6 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction.commit();
         } catch (Exception ex) {
             ex.printStackTrace();
-//            Util.getSessionFactory().close();
             session.clear();
             transaction.rollback();
 
@@ -91,9 +96,15 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        transaction.begin();
-        session.createSQLQuery("truncate users").executeUpdate();
-        transaction.commit();
-        session.clear();
+        try {
+            transaction.begin();
+            session.createSQLQuery("truncate users").executeUpdate();
+            transaction.commit();
+            session.clear();
+        } catch (Exception ex) {
+            transaction.rollback();
+
+        }
+
     }
 }
