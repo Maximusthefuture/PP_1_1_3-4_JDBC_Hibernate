@@ -22,14 +22,25 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS users (id INT not null AUTO_INCREMENT, " +
+        String tableName = "users";
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (id INT not null AUTO_INCREMENT, " +
                 "userName VARCHAR(50) , " +
                 "lastName VARCHAR(100) , " +
                 "age SMALLINT, PRIMARY KEY (id))";
         try {
+
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }
+    }
+
+    public void getData() throws SQLException {
+        ResultSet rs = statement.getResultSet();
+        while (rs.next()) {
+            String s = rs.getString(2);
+            
+
         }
     }
 
